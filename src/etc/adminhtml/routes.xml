@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Force Order Complete Status Module
+ *
+ * @author    Peter McWilliams <pmcwilliams@augustash.com>
+ * @copyright Copyright (c) 2021 August Ash (https://www.augustash.com)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="sales">
+            <module name="Augustash_ForceComplete" before="Magento_Sales" />
+        </route>
+    </router>
+</config>

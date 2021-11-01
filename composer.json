@@ -1,0 +1,24 @@
+{
+    "name": "augustash/module-force-complete",
+    "type": "magento2-module",
+    "description": "Magento 2 Force Complete Orders",
+    "version": "1.0.0",
+    "license": [
+        "MIT"
+    ],
+    "require": {
+        "magento/module-sales": "*",
+        "magento/module-ui": "*"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Augustash\\ForceComplete\\": "src/"
+        },
+        "files": [
+            "src/registration.php"
+        ]
+    }
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Force Order Complete Status Module
+ *
+ * @author    Peter McWilliams <pmcwilliams@augustash.com>
+ * @copyright Copyright (c) 2021 August Ash (https://www.augustash.com)
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <listingToolbar name="listing_top">
+        <massaction name="listing_massaction">
+            <action name="order_force_complete">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="type" xsi:type="string">order_force_complete</item>
+                        <item name="label" xsi:type="string" translate="true">Force Complete</item>
+                        <item name="url" xsi:type="url" path="sales/order/forceComplete"/>
+                        <item name="confirm" xsi:type="array">
+                            <item name="title" xsi:type="string" translate="true">Force Complete Order(s)</item>
+                            <item name="message" xsi:type="string" translate="true">Are you sure you want to force complete the selected orders?</item>
+                        </item>
+                    </item>
+                </argument>
+            </action>
+        </massaction>
+    </listingToolbar>
+</listing>
