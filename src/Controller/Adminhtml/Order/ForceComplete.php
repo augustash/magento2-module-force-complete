@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Force Order Complete Status Module
+ * August Ash Force Order Complete Status Module
  *
  * @author    Peter McWilliams <pmcwilliams@augustash.com>
- * @copyright Copyright (c) 2021 August Ash (https://www.augustash.com)
+ * @copyright 2022 August Ash, Inc. (https://www.augustash.com)
  */
 
 namespace Augustash\ForceComplete\Controller\Adminhtml\Order;
@@ -17,105 +17,68 @@ use Magento\Framework\Phrase;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order as OrderModel;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactoryInterface;
-use Magento\Ui\Component\MassAction\Filter;
+use Magento\Ui\Component\MassAction\Filter as UiFilter;
 
 /**
- * Force complete sales order mass action.
+ * Force complete sales order mass action class.
  */
 class ForceComplete implements HttpPostActionInterface
 {
-    /**
-     * @var \Magento\Ui\Component\MassAction\Filter
-     */
-    protected $filter;
-
-    /**
-     * @var \Magento\Framework\Message\ManagerInterface
-     */
-    protected $messageManager;
-
-    /**
-     * @var \Magento\Sales\Model\ResourceModel\Order\CollectionFactoryInterface
-     */
-    protected $orderCollectionFactory;
-
-    /**
-     * @var \Magento\Sales\Api\OrderRepositoryInterface
-     */
-    protected $orderRepository;
-
-    /**
-     * @var \Magento\Framework\Controller\ResultFactory
-     */
-    protected $resultFactory;
-
     /**
      * Constructor.
      *
      * Initialize class dependencies.
      *
-     * @param \Magento\Ui\Component\MassAction\Filter $filter
      * @param \Magento\Framework\Message\ManagerInterface $messageManager
      * @param \Magento\Sales\Model\ResourceModel\Order\CollectionFactoryInterface $orderCollectionFactory
      * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
      * @param \Magento\Framework\Controller\ResultFactory $resultFactory
+     * @param \Magento\Ui\Component\MassAction\Filter $uiFilter
      */
     public function __construct(
-        Filter $filter,
         MessageManagerInterface $messageManager,
         CollectionFactoryInterface $orderCollectionFactory,
         OrderRepositoryInterface $orderRepository,
-        ResultFactory $resultFactory
+        ResultFactory $resultFactory,
+        UiFilter $uiFilter,
     ) {
-        $this->filter = $filter;
         $this->messageManager = $messageManager;
         $this->orderCollectionFactory = $orderCollectionFactory;
         $this->orderRepository = $orderRepository;
         $this->resultFactory = $resultFactory;
+        $this->uiFilter = $uiFilter;
     }
 
     /**
-     * {@inheritdoc}
+     * Execute action based on request and return result.
+     *
+     * @return \Magento\Framework\Controller\ResultInterface|ResponseInterface
+     * @throws \Magento\Framework\Exception\NotFoundException
      */
     public function execute()
     {
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+        $orderCount = 0;
 
         try {
             /** @var \Magento\Sales\Model\ResourceModel\Order\Collection $collection */
-            $collection = $this->filter->getCollection($this->orderCollectionFactory->create());
-            $countCollection = $collection->getSize();
-            $countComplete = 0;
+            $orderCollection = $this->uiFilter->getCollection($this->orderCollectionFactory->create());
 
-            foreach ($collection->getItems() as $order) {
+            foreach ($orderCollection as $order) {
                 /** @var \Magento\Sales\Model\Order $order */
                 $order
                     ->setState(OrderModel::STATE_COMPLETE)
                     ->setStatus(OrderModel::STATE_COMPLETE);
                 $this->orderRepository->save($order);
-                $countComplete++;
+                $orderCount++;
             }
 
-            $countNotComplete = $countCollection - $countComplete;
+            $this->messageManager->addSuccessMessage(
+                __('%1 order(s) of %2 were force completed.', $orderCount, $orderCollection->getSize())
+            );
 
-            if ($countNotComplete > 0 && $countComplete > 0) {
-                $this->messageManager->addErrorMessage(\sprintf(
-                    '%d order(s) out of %d were not marked as complete.',
-                    $countNotComplete,
-                    $countCollection
-                ));
-            } elseif ($countNotComplete > 0 && $countComplete === 0) {
-                $this->messageManager->addErrorMessage('No order(s) were marked as complete.');
-            } else {
-                $this->messageManager->addSuccessMessage(\sprintf(
-                    '%d order(s) out of %d were marked as complete.',
-                    $countComplete,
-                    $countCollection
-                ));
-            }
-
-            $resultRedirect->setPath('sales/*/');
+            $resultRedirect->setPath('sales/order/');
         } catch (LocalizedException $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
             $resultRedirect->setPath('*/*/');
