@@ -1,3 +1,5 @@
+"%1 order(s) of %2 were force completed.","%1 order(s) of %2 were force completed."
 "Are you sure you want to force complete the selected orders?","Are you sure you want to force complete the selected orders?"
 "Force Complete Order(s)","Force Complete Order(s)"
 "Force Complete","Force Complete"
+"Something went wrong while force completing the order(s).","Something went wrong while force completing the order(s)."
