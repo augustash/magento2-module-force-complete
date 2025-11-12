@@ -36,17 +36,12 @@ class ForceComplete implements HttpPostActionInterface
      * @param \Magento\Ui\Component\MassAction\Filter $uiFilter
      */
     public function __construct(
-        MessageManagerInterface $messageManager,
-        CollectionFactoryInterface $orderCollectionFactory,
-        OrderRepositoryInterface $orderRepository,
-        ResultFactory $resultFactory,
-        UiFilter $uiFilter,
+        protected MessageManagerInterface $messageManager,
+        protected CollectionFactoryInterface $orderCollectionFactory,
+        protected OrderRepositoryInterface $orderRepository,
+        protected ResultFactory $resultFactory,
+        protected UiFilter $uiFilter,
     ) {
-        $this->messageManager = $messageManager;
-        $this->orderCollectionFactory = $orderCollectionFactory;
-        $this->orderRepository = $orderRepository;
-        $this->resultFactory = $resultFactory;
-        $this->uiFilter = $uiFilter;
     }
 
     /**
